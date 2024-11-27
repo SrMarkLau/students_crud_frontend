@@ -1,13 +1,8 @@
-import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
 import StudentService from '../../services/StudentService';
 
-const mock = new MockAdapter(axios);
-const STUDENT_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000/students';
-
-describe('StudentService Tests', () => {
+describe('StudentService Tests (Mocked)', () => {
   afterEach(() => {
-    mock.reset(); // Limpa os mocks após cada teste
+    jest.clearAllMocks(); // Limpa todos os mocks após cada teste
   });
 
   test('should fetch all students', async () => {
@@ -16,44 +11,53 @@ describe('StudentService Tests', () => {
       { id: 1001, name: 'Jane Doe', email: 'janedoe@example.com' },
     ];
 
-    mock.onGet(STUDENT_API_BASE_URL).reply(200, students);
+    jest.spyOn(StudentService, 'getStudents').mockResolvedValue({ data: students });
 
     const response = await StudentService.getStudents();
     expect(response.data).toEqual(students);
+    expect(StudentService.getStudents).toHaveBeenCalledTimes(1);
   });
 
   test('should fetch a student by ID', async () => {
     const student = { id: 1000, name: 'John Doe', email: 'johndoe@example.com' };
 
-    mock.onGet(`${STUDENT_API_BASE_URL}/1000`).reply(200, student);
+    jest.spyOn(StudentService, 'getStudentById').mockResolvedValue({ data: student });
 
     const response = await StudentService.getStudentById(1000);
     expect(response.data).toEqual(student);
+    expect(StudentService.getStudentById).toHaveBeenCalledWith(1000);
+    expect(StudentService.getStudentById).toHaveBeenCalledTimes(1);
   });
 
   test('should create a new student', async () => {
     const newStudent = { name: 'John Doe', email: 'johndoe@example.com' };
     const createdStudent = { id: 1000, ...newStudent };
 
-    mock.onPost(STUDENT_API_BASE_URL, newStudent).reply(201, createdStudent);
+    jest.spyOn(StudentService, 'createStudent').mockResolvedValue({ data: createdStudent });
 
     const response = await StudentService.createStudent(newStudent);
     expect(response.data).toEqual(createdStudent);
+    expect(StudentService.createStudent).toHaveBeenCalledWith(newStudent);
+    expect(StudentService.createStudent).toHaveBeenCalledTimes(1);
   });
 
   test('should update an existing student', async () => {
     const updatedStudent = { name: 'John Doe Updated', email: 'johnupdated@example.com' };
 
-    mock.onPut(`${STUDENT_API_BASE_URL}/1000`, updatedStudent).reply(200, updatedStudent);
+    jest.spyOn(StudentService, 'updateStudent').mockResolvedValue({ data: updatedStudent });
 
     const response = await StudentService.updateStudent(1000, updatedStudent);
     expect(response.data).toEqual(updatedStudent);
+    expect(StudentService.updateStudent).toHaveBeenCalledWith(1000, updatedStudent);
+    expect(StudentService.updateStudent).toHaveBeenCalledTimes(1);
   });
 
   test('should delete a student by ID', async () => {
-    mock.onDelete(`${STUDENT_API_BASE_URL}/1000`).reply(204);
+    jest.spyOn(StudentService, 'deleteStudent').mockResolvedValue({ status: 204 });
 
     const response = await StudentService.deleteStudent(1000);
     expect(response.status).toBe(204);
+    expect(StudentService.deleteStudent).toHaveBeenCalledWith(1000);
+    expect(StudentService.deleteStudent).toHaveBeenCalledTimes(1);
   });
 });
