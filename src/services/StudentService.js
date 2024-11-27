@@ -2,6 +2,10 @@ import axios from 'axios';
 
 const STUDENT_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+if (!STUDENT_API_BASE_URL) {
+  console.error('API Base URL is not defined. Please check your environment variables.');
+}
+
 class StudentService {
   getStudents() {
     return axios.get(STUDENT_API_BASE_URL);
