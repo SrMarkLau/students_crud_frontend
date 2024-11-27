@@ -1,0 +1,48 @@
+name: Deploy to Railway
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy React Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Setup Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    # Install dependencies
+    - name: Install Dependencies
+      run: npm install
+
+    # Run tests
+    - name: Run Tests
+      run: npm test -- --watchAll=false
+
+    # Build React App
+    - name: Build React App
+      if: ${{ success() }}
+      run: npm run build
+
+    # Install Railway CLI
+    - name: Install Railway CLI
+      run: |
+        npm install -g @railway/cli
+
+    # Deploy to Railway if build succeeds
+    - name: Deploy to Railway
+      if: ${{ success() }}
+      env:
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      run: |
+        railway up --service students_crud_frontend
