@@ -24,4 +24,8 @@ class StudentService {
   }
 }
 
-export default new StudentService();
+// Assign the instance of the class to a variable
+const studentServiceInstance = new StudentService();
+
+// Export the instance as the default export
+export default studentServiceInstance;
