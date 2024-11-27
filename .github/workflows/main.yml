@@ -1,4 +1,4 @@
-name: Deploy to Railway
+name: Build and Deploy to Railway
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    name: Build and Deploy React Frontend
+    name: Build and Deploy
     runs-on: ubuntu-latest
 
     steps:
